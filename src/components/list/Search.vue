@@ -1,11 +1,21 @@
 <script setup>
 import SearchIcon from '../icons/SearchIcon.vue';
+
+const props = defineProps({
+    filter: String
+})
+
+const f = (e) => {
+    const target = e.target
+    const value = target.value.toLowerCase()
+    if (props.filter) props.filter(value)
+}
 </script>
         
 <template>
     <label class="label" for="search">
         <SearchIcon />
-        <input id="search" class="search" type="text" placeholder="Search...">
+        <input @keyup="f" id="search" class="search" type="text" placeholder="Search...">
     </label>
 </template>
     

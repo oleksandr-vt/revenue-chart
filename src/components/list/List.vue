@@ -1,12 +1,36 @@
 <script setup>
 import Search from './Search.vue';
 import ListTable from './ListTable.vue';
+import { onMounted, ref } from "vue";
+import { useList } from '@/api/useList';
+
+let listData = ref([])
+
+onMounted(async () => {
+    try {
+        listData.value = await useList()
+
+        if (!listData) {
+            throw new Error(e)
+        }
+    } catch (e) {
+        console.log(e)
+        listData.value = false
+    }
+})
+
+
+const filter = (s) => {
+    listData.filter((item) => {
+        item.name.toLowerCase().includes(s)
+    })
+}
 </script>
     
 <template>
     <div class="wrapper">
-        <Search />
-        <ListTable />
+        <Search :filter="filter" />
+        <ListTable :listData="listData" />
     </div>
 </template>
 

@@ -1,0 +1,1 @@
+export const getFormattedDate = (date) => new Intl.DateTimeFormat('uk-UA').format(date)

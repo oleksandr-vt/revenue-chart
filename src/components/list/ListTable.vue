@@ -1,21 +1,8 @@
 <script setup>
-import { onMounted, ref } from "vue";
-import { useList } from '@/api/useList';
+import { getFormattedDate } from "@/const";
 
-let listData = ref([])
-
-const getFormattedDate = (date) => new Intl.DateTimeFormat('uk-UA').format(date)
-
-onMounted(async () => {
-    try {
-        listData.value = await useList()
-
-        if (!listData) {
-            throw new Error(e)
-        }
-    } catch (e) {
-        console.log(e);
-    }
+const props = defineProps({
+    listData: Array
 })
 </script>
         
@@ -27,10 +14,14 @@ onMounted(async () => {
             <td><span>State</span></td>
         </thead>
 
-        <tr v-for="item in listData">
+        <tr v-for="item in props.listData" v-if="props.listData">
             <td class="name">{{ item.name }}</td>
             <td class="date">{{ getFormattedDate(new Date(item.date)) }}</td>
             <td class="state" :class="{ active: item.isActive }">{{ item.isActive ? 'Active' : 'Disable' }}</td>
+        </tr>
+
+        <tr v-else>
+            <td>Oops, an error has been occured, try again.</td>
         </tr>
     </table>
 </template>
@@ -41,9 +32,8 @@ onMounted(async () => {
 .table {
     color: $color-gray-light;
     border-spacing: 0;
-    border: 2px solid $color-gray-border;
+    border: 1px solid $color-gray-border;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06);
-    border-radius: 8px;
     border-collapse: collapse;
 
     thead {
@@ -56,6 +46,14 @@ onMounted(async () => {
             font-weight: 500;
             font-size: 12px;
             width: 33.333%;
+
+            @media (max-width: $breakpoint576) {
+                padding: 12px;
+            }
+
+            span {
+                cursor: pointer;
+            }
         }
     }
 
@@ -72,6 +70,10 @@ onMounted(async () => {
         td {
             padding: 16px 24px;
             font-size: 14px;
+
+            @media (max-width: $breakpoint576) {
+                padding: 16px 12px;
+            }
         }
 
         .name {
