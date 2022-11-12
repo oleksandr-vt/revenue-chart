@@ -2,7 +2,7 @@
 import SearchIcon from '../icons/SearchIcon.vue';
 
 const props = defineProps({
-    filter: String
+    filter: Function
 })
 
 const f = (e) => {

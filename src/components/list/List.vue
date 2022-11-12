@@ -1,36 +1,44 @@
 <script setup>
 import Search from './Search.vue';
 import ListTable from './ListTable.vue';
-import { onMounted, ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useList } from '@/api/useList';
 
 let listData = ref([])
 
 onMounted(async () => {
     try {
-        listData.value = await useList()
-
-        if (!listData) {
+        const f = await useList()
+        if (!f) {
             throw new Error(e)
         }
+
+        listData.value = f
     } catch (e) {
         console.log(e)
-        listData.value = false
     }
 })
 
+const currentFeeds = ref(listData.value)
+
+watch(() => listData.value, newFeeds => {
+    currentFeeds.value = newFeeds
+})
 
 const filter = (s) => {
-    listData.filter((item) => {
-        item.name.toLowerCase().includes(s)
-    })
+    if (!s) {
+        currentFeeds.value = listData.value
+        return
+    }
+
+    currentFeeds.value = listData.value.filter((a) => a.name.toLowerCase().includes(s))
 }
 </script>
     
 <template>
     <div class="wrapper">
         <Search :filter="filter" />
-        <ListTable :listData="listData" />
+        <ListTable :listData="currentFeeds" />
     </div>
 </template>
 
