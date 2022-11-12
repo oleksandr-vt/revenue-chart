@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { getFormattedDate } from "@/const";
+import router from "../../router";
 
 const props = defineProps({
     listData: Array
@@ -42,7 +43,8 @@ const sortFunc = (value) => {
             <td @click="sortFunc('state')"><span>State</span></td>
         </thead>
 
-        <tr v-for="item in props.listData" v-if="props.listData">
+        <tr v-for="item in props.listData" v-if="props.listData"
+            @click="router.push({ name: 'item', params: { id: item.id } })">
             <td class="name">{{ item.name }}</td>
             <td class="date">{{ getFormattedDate(new Date(item.date)) }}</td>
             <td class="state" :class="{ active: item.isActive }">{{ item.isActive ? 'Active' : 'Disable' }}</td>
