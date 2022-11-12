@@ -1,17 +1,45 @@
 <script setup>
+import { ref } from "vue";
 import { getFormattedDate } from "@/const";
 
 const props = defineProps({
     listData: Array
 })
+
+const selectedSortOption = ref('')
+
+const sortFunc = (value) => {
+    selectedSortOption.value = value
+
+    props.listData.sort((a, b) => {
+        if (selectedSortOption.value === 'name') {
+            if ((a.name ?? '') < (b.name ?? '')) return -1
+            if ((a.name ?? '') > (b.name ?? '')) return 1
+        }
+
+        if (selectedSortOption.value === 'date') {
+            const x = new Date(a.date)
+            const y = new Date(b.date)
+
+            if (x.getTime() < y.getTime()) return -1
+            if (x.getTime() > y.getTime()) return 1
+        }
+
+        if (selectedSortOption.value === 'state') {
+            return (a.isActive === b.isActive) ? 0 : a.isActive ? -1 : 1;
+        }
+
+        return 0
+    })
+}
 </script>
         
 <template>
     <table class="table">
         <thead>
-            <td><span>Name</span></td>
-            <td><span>Date</span></td>
-            <td><span>State</span></td>
+            <td @click="sortFunc('name')"><span>Name</span></td>
+            <td @click="sortFunc('date')"><span>Date</span></td>
+            <td @click="sortFunc('state')"><span>State</span></td>
         </thead>
 
         <tr v-for="item in props.listData" v-if="props.listData">
@@ -46,13 +74,16 @@ const props = defineProps({
             font-weight: 500;
             font-size: 12px;
             width: 33.333%;
+            cursor: pointer;
 
             @media (max-width: $breakpoint576) {
                 padding: 12px;
             }
 
-            span {
-                cursor: pointer;
+            &:hover {
+                span {
+                    text-decoration: underline;
+                }
             }
         }
     }
